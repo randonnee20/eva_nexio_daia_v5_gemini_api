@@ -59,14 +59,18 @@ def _error_return(msg):
         f = go.Figure(); f.update_layout(height=200, template="plotly_white"); return f
     return (_ef(),) * 14 + (pd.DataFrame(), "", "", "", "", msg)
 
-def run_analysis(file_obj, schema_choice, no_llm, request: gr.Request, progress=gr.Progress()):
+def run_analysis(file_obj, schema_choice, no_llm, progress=gr.Progress()):
     global _last_html_path, _last_charts_dir, _last_pipeline_ref, _last_auto_result_list
     _last_auto_result_list = []
     if _IMPORT_ERROR:
         return _error_return(f"모듈 로드 오류:\n{_IMPORT_ERROR[:500]}")
     if file_obj is None:
         return _error_return("파일을 먼저 업로드하세요.")
-    allowed, used, limit = check_and_increment(request)
+    try:
+        allowed, used, limit = check_and_increment(None)
+    except:
+        allowed, used, limit = True, 0, DAILY_LIMIT
+
     if not allowed:
         return _error_return(f"오늘 사용 한도({limit}회/일) 초과. 내일 다시 이용해 주세요.")
     pipeline = _get_pipeline()
