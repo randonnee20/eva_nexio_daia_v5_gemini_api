@@ -22,6 +22,7 @@ try:
 except ImportError:
     pass
 
+import os
 import gradio as gr
 import pandas as pd
 import yaml
@@ -32,6 +33,8 @@ from visualization.quick_plot import quick_plot
 from report.pdf_exporter import PDFExporter
 from utils.rate_limiter import check_and_increment, get_remaining, DAILY_LIMIT
 
+limit = int(os.getenv("DAILY_LIMIT", 5))
+allowed, used = True, 0
 
 # ── 로고 ─────────────────────────────────────────────────────────────────────
 def _load_logo_html():
@@ -66,7 +69,7 @@ def _schema_choices():
 
 
 # ── 메인 분석 함수 (request: gr.Request 추가) ─────────────────────────────────
-def run_analysis(file_obj, schema_choice, no_llm, request: gr.Request, progress=gr.Progress()):
+def run_analysis(file_obj, schema_choice, no_llm, progress=gr.Progress()):
     global _last_html_path, _last_charts_dir, _last_pipeline_ref, _last_auto_result_list
     _last_auto_result_list = []
 
