@@ -1,3 +1,13 @@
+﻿---
+title: EVA Nexio DAIA v5
+emoji: 🚀
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: "4.36.1"
+app_file: app.py
+pinned: false
+---
 # EVA NEXIO · DAIA v4
 
 > **Data AI Assistant** — 11단계 자동 데이터 분석 파이프라인
@@ -68,3 +78,4 @@ models/
 
 > GGUF 모델 파일은 용량 문제로 압축 파일에서 제외됩니다.  
 > 기존 `models/` 폴더의 `.gguf` 파일을 그대로 유지하면 됩니다.
+
