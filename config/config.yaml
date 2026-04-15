@@ -1,0 +1,117 @@
+# DAIA v5 설정 파일 — 클라우드/로컬 공용
+#
+# [로컬] llm.model_path에 GGUF 파일 경로 입력
+# [클라우드] GEMINI_API_KEY 환경변수 설정 → model_path 무시
+
+# ── LLM ──────────────────────────────────────────────────────────────────────
+llm:
+  # 로컬 GGUF 모델 경로 (클라우드에서는 사용 안 함)
+  model_path: ""
+  n_ctx: 4096
+  n_threads: 4
+  n_gpu_layers: 0
+  max_tokens: 512
+  temperature: 0.3
+  top_p: 0.9
+  repeat_penalty: 1.1
+  stop_sequences: ["</s>", "Human:", "Assistant:"]
+
+# ── 스키마 감지 ──────────────────────────────────────────────────────────────
+schema:
+  force_schema: null
+  signal_name_keywords:
+    - signalname
+    - signal_name
+    - tag_name
+    - tagname
+    - sensor_name
+    - parameter
+  value_col_keywords:
+    - value
+    - val
+    - measurement
+    - reading
+  timestamp_keywords:
+    - updatedate
+    - timestamp
+    - datetime
+    - date
+    - time
+    - created_at
+
+# ── 파일 로드 ─────────────────────────────────────────────────────────────────
+security:
+  max_file_size: 52428800    # 50MB (클라우드 메모리 고려)
+  allowed_extensions:
+    - ".csv"
+    - ".tsv"
+    - ".xlsx"
+    - ".xls"
+    - ".json"
+    - ".parquet"
+    - ".feather"
+  sanitize_column_names: false
+
+# ── 전처리 ───────────────────────────────────────────────────────────────────
+preprocessing:
+  missing:
+    drop_threshold: 0.95
+    drop_col_threshold: 0.95
+    fill_numeric: "median"
+    fill_categorical: "mode"
+  outlier:
+    method: "iqr"
+    iqr_multiplier: 2.5
+    iqr_factor: 2.5
+    zscore_threshold: 3.5
+    contamination: 0.1
+    action: "clip"
+  encoding:
+    categorical_threshold: 10
+    handle_unknown: "ignore"
+  feature_engineering:
+    enable_auto_features: true
+    date_features: true
+    interaction_features: false
+  datetime:
+    auto_parse: true
+    extract_features: true
+  mixed_value_col:
+    split_numeric_text: true
+
+# ── EDA / 시각화 ─────────────────────────────────────────────────────────────
+eda:
+  max_cardinality_barplot: 30
+  sample_for_scatter: 5000
+  correlation_threshold: 0.7
+  top_n_categorical: 15
+  time_series:
+    ma_short: 20
+    ma_long: 100
+    anomaly_sigma: 2.5
+
+# ── 리포트 ───────────────────────────────────────────────────────────────────
+report:
+  output_dir: "/tmp/daia_output"    # 클라우드: /tmp 사용
+  open_browser: false               # 클라우드에서 브라우저 열기 비활성
+
+# ── AutoML ───────────────────────────────────────────────────────────────────
+automl:
+  model_save_path: "/tmp/daia_output/models"
+
+# ── 모델 저장 ────────────────────────────────────────────────────────────────
+model_management:
+  save_preprocessing: true
+
+# ── 로깅 ─────────────────────────────────────────────────────────────────────
+logging:
+  level: "INFO"
+  file_path: "/tmp/logs/app.log"    # 클라우드: /tmp 사용
+  max_size: 10485760
+  backup_count: 3
+  format: "%(asctime)s [%(levelname)s] %(message)s"
+
+# ── 성능 ─────────────────────────────────────────────────────────────────────
+performance:
+  n_jobs: -1
+  random_seed: 42

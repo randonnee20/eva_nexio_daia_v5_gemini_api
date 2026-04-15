@@ -1,0 +1,42 @@
+name: daia_v3
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.12
+  - pip
+
+  # 데이터 처리
+  - pandas>=2.1
+  - numpy>=1.26
+  - scipy>=1.11
+  - scikit-learn>=1.4
+
+  # 시각화
+  - plotly>=5.17
+
+  # 파일 형식
+  - openpyxl>=3.1
+  - pyarrow>=14.0
+
+  # 설정
+  - pyyaml>=6.0
+
+  - pip:
+    # UI
+    - gradio>=4.20.0
+
+    # 대용량 파일
+    - dask[dataframe]>=2024.1.0
+    - duckdb>=0.10.0
+
+    # HTTP
+    - requests>=2.31.0
+
+    # 차트 PNG 저장 (선택)
+    - kaleido>=0.2.1
+
+    # LLM: setup_conda.bat 에서 선택 설치
+    # CPU:  pip install llama-cpp-python
+    # CUDA: CMAKE_ARGS="-DLLAMA_CUDA=on" pip install llama-cpp-python
