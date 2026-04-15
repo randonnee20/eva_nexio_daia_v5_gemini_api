@@ -57,7 +57,7 @@ def _error_return(msg):
     import plotly.graph_objects as go
     def _ef():
         f = go.Figure(); f.update_layout(height=200, template="plotly_white"); return f
-    return (_ef(),) * 14 + (pd.DataFrame(), "", "", "", "", msg)
+    return (_ef(),) * 14 + (pd.DataFrame({"error": [msg]}), msg, "", "", "", msg)
 
 def run_analysis(file_obj, schema_choice, no_llm, progress=gr.Progress()):
     global _last_html_path, _last_charts_dir, _last_pipeline_ref, _last_auto_result_list
