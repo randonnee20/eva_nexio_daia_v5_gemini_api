@@ -1,17 +1,22 @@
 ﻿---
 title: EVA Nexio DAIA v5
-emoji: 🚀
+emoji: 📊
 colorFrom: blue
-colorTo: purple
+colorTo: indigo
 sdk: gradio
-sdk_version: "4.36.1"
+sdk_version: 4.44.0
 python_version: "3.10"
 app_file: app.py
 pinned: false 
+license: mit
 ---
-# EVA NEXIO · DAIA v4
+# EVA NEXIO.DAIA v5
 
-> **Data AI Assistant** — 11단계 자동 데이터 분석 파이프라인
+데이터 자동분석 플랫폼 | 품질 검증 · 피처 엔지니어링 · 분석 제안 · CSV 내보내기
+
+- **LLM**: Gemini 1.5 Flash API
+- **일일 제한**: IP당 5회
+
 
 ## 🚀 빠른 시작
 
