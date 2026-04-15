@@ -1,21 +1,9 @@
 # DAIA v5 - Hugging Face Spaces 배포용
 # llama-cpp-python / CUDA 제거 → Gemini API 사용
 
+
 # ── UI ───────────────────────────────────────────────────────
-python==3.10
-
-gradio==4.44.1
-gradio-client==1.3.0
-huggingface_hub==0.20.3
-
-httpx==0.24.1
-pydantic==2.7.4
-anyio==3.7.1
-
-fastapi==0.110.0
-uvicorn==0.30.6
-
-pydub==0.25.1
+gradio==4.42.0
 
 # ── 데이터 처리 ──────────────────────────────────────────────
 pandas>=2.1.0
