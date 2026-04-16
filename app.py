@@ -17,6 +17,19 @@ taskkill /PID 12345 /F
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
+# ── Gradio bug fix: "const" in bool → TypeError ──────────────────────────────
+import gradio_client.utils as _gcu
+_orig_get_type = _gcu.get_type
+def _patched_get_type(schema):
+    if not isinstance(schema, dict):
+        return "any"
+    return _orig_get_type(schema)
+_gcu.get_type = _patched_get_type
+
+# ─────────────────────────────────────────────────────────────────────────────
+ 
+
 import gradio as gr
 import pandas as pd
 import yaml
@@ -25,6 +38,18 @@ from pathlib import Path
 from core.pipeline import DAIAPipeline
 from visualization.quick_plot import quick_plot
 from report.pdf_exporter import PDFExporter
+
+# ── 핵심 모듈 방어적 import ───────────────────────────────────────────────────
+_IMPORT_ERROR = None
+try:
+    from core.pipeline import DAIAPipeline
+    from visualization.quick_plot import quick_plot
+    from report.pdf_exporter import PDFExporter
+    from utils.rate_limiter import check_and_increment, get_remaining, DAILY_LIMIT
+except Exception as e:
+    import traceback
+    _IMPORT_ERROR = traceback.format_exc()
+    DAILY_LIMIT = 5
 
 
 def _load_logo_html():
