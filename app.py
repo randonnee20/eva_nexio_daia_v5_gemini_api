@@ -17,23 +17,12 @@ taskkill /PID 12345 /F
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# ── Gradio bug fix: additionalProperties=True → TypeError ────────────────────
-import gradio_client.utils as _gcu
-_orig_json_schema = _gcu._json_schema_to_python_type
-def _patched_json_schema(schema, defs=None):
-    if not isinstance(schema, dict):
-        return "any"
-    return _orig_json_schema(schema, defs)
-_gcu._json_schema_to_python_type = _patched_json_schema
-# ─────────────────────────────────────────────────────────────────────────────
-
 import gradio as gr
 import pandas as pd
 import yaml
 import tempfile
 from pathlib import Path
 
-# ── 핵심 모듈 방어적 import ───────────────────────────────────────────────────
 _IMPORT_ERROR = None
 try:
     from core.pipeline import DAIAPipeline
@@ -476,7 +465,7 @@ with gr.Blocks(
                     event_plot = gr.Plot()
 
                 with gr.Tab("📋 기술통계"):
-                    stats_table = gr.Dataframe(label="기술통계 (왜도·첨도 포함)", wrap=True)
+                    stats_table = gr.Dataframe(label="기술통계 (왜도·첨도 포함)")
 
                 with gr.Tab("🔬 데이터 품질"):
                     quality_md_out = gr.Markdown()
