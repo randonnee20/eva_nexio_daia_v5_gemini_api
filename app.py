@@ -203,7 +203,7 @@ def run_analysis(file_obj, schema_choice, no_llm, open_browser, progress=None):
         c_cluster_v = get_fig("cluster_visualization")
 
         if stats_df is not None and len(stats_df):
-            stats_show = stats_df.to_html(classes="table", border=0)
+            stats_show = stats_df.to_html(border=0, classes="stats-table")
         else:
             stats_show = "<p>수치형 컬럼 없음</p>"
         
@@ -469,7 +469,7 @@ with gr.Blocks(
                     event_plot = gr.Plot()
 
                 with gr.Tab("📋 기술통계"):
-                    stats_table = gr.HTML(label="기술통계")
+                    stats_table = gr.HTML()
 
                 with gr.Tab("🔬 데이터 품질"):
                     quality_md_out = gr.Markdown()
