@@ -1,7 +1,7 @@
 # DAIA v5 - Hugging Face Spaces 배포용
 # llama-cpp-python / CUDA 제거 → Gemini API 사용
 
-
+#requirements.txt
 # ── UI ───────────────────────────────────────────────────────
 gradio==4.42.0
 

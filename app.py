@@ -5,7 +5,8 @@ DAIA v5 - Gradio UI
 ## 빠른 시작
 
     conda activate daia_v3   # 기존 환경 재사용 가능
-    python app.py            # Gradio UI → http://localhost:7861
+    python app.py 
+    conda activate tf210           # Gradio UI → http://localhost:7861
     python main.py data.csv  # CLI 실행
 
 # 7860 포트 사용 중인 프로세스 확인
