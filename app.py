@@ -17,6 +17,26 @@ taskkill /PID 12345 /F
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# ── Gradio bug: "const" in bool → 설치 파일 직접 패치 ────────────────────────
+try:
+    import gradio_client.utils as _gcu
+    _utils_file = _gcu.__file__
+    with open(_utils_file, "r", encoding="utf-8") as _f:
+        _src = _f.read()
+    _old = 'if "const" in schema:'
+    _new = 'if isinstance(schema, dict) and "const" in schema:'
+    if _old in _src:
+        with open(_utils_file, "w", encoding="utf-8") as _f:
+            _f.write(_src.replace(_old, _new))
+        import importlib
+        importlib.reload(_gcu)
+        print("[patch] gradio_client.utils 패치 완료")
+    else:
+        print("[patch] 이미 패치됨 또는 버전 다름")
+except Exception as _e:
+    print(f"[patch] 실패 (무시): {_e}")
+# ─────────────────────────────────────────────────────────────────────────────
+
 import gradio as gr
 import pandas as pd
 import yaml
