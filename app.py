@@ -14,28 +14,9 @@ netstat -ano | findstr :7860
 # PID 확인 후 종료 (예: PID가 12345인 경우)
 taskkill /PID 12345 /F
 """
+# app.py 상단 패치 블록 전체 삭제, 깔끔하게:
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-# ── Gradio bug: "const" in bool → 설치 파일 직접 패치 ────────────────────────
-try:
-    import gradio_client.utils as _gcu
-    _utils_file = _gcu.__file__
-    with open(_utils_file, "r", encoding="utf-8") as _f:
-        _src = _f.read()
-    _old = 'if "const" in schema:'
-    _new = 'if isinstance(schema, dict) and "const" in schema:'
-    if _old in _src:
-        with open(_utils_file, "w", encoding="utf-8") as _f:
-            _f.write(_src.replace(_old, _new))
-        import importlib
-        importlib.reload(_gcu)
-        print("[patch] gradio_client.utils 패치 완료")
-    else:
-        print("[patch] 이미 패치됨 또는 버전 다름")
-except Exception as _e:
-    print(f"[patch] 실패 (무시): {_e}")
-# ─────────────────────────────────────────────────────────────────────────────
 
 import gradio as gr
 import pandas as pd
@@ -221,8 +202,11 @@ def run_analysis(file_obj, schema_choice, no_llm, open_browser, progress=None):
         c_event = get_fig("event_timeline")
         c_cluster_v = get_fig("cluster_visualization")
 
-        stats_show = stats_df if stats_df is not None and len(stats_df) else pd.DataFrame({"메시지": ["수치형 컬럼 없음"]})
-
+        if stats_df is not None and len(stats_df):
+            stats_show = stats_df.to_html(classes="table", border=0)
+        else:
+            stats_show = "<p>수치형 컬럼 없음</p>"
+        
         quality_md = _safe_markdown_quality(quality)
 
         feat_md = ""
@@ -291,7 +275,7 @@ def run_analysis(file_obj, schema_choice, no_llm, open_browser, progress=None):
             ef, ef, ef, ef,
             ef, ef, ef, ef, ef,
             ef, ef, ef, ef, ef,
-            pd.DataFrame(),
+            "<p></p>",
             f"❌ 오류: {e}",
             "",
             "",
@@ -485,7 +469,7 @@ with gr.Blocks(
                     event_plot = gr.Plot()
 
                 with gr.Tab("📋 기술통계"):
-                    stats_table = gr.Dataframe(label="기술통계 (왜도·첨도 포함)")
+                    stats_table = gr.HTML(label="기술통계")
 
                 with gr.Tab("🔬 데이터 품질"):
                     quality_md_out = gr.Markdown()
