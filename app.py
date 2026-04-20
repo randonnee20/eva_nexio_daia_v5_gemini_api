@@ -20,6 +20,18 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import gradio as gr
+
+# ── Gradio 4.36.1 bug fix: get_api_info TypeError 차단 ───────────────────────
+import gradio.blocks as _gb
+_orig_get_api_info = _gb.Blocks.get_api_info
+def _safe_get_api_info(self):
+    try:
+        return _orig_get_api_info(self)
+    except TypeError:
+        return {}
+_gb.Blocks.get_api_info = _safe_get_api_info
+# ─────────────────────────────────────────────────────────────────────────────
+
 import pandas as pd
 import yaml
 import tempfile
@@ -38,7 +50,6 @@ except Exception as e:
 
 
 def _load_logo_html():
-    """로고 PNG를 직접 읽어 base64 변환 — make_logo.py 없이 png 교체만으로 반영"""
     import base64
     png_path = Path(__file__).parent / "assets" / "logo-title.png"
     try:
@@ -49,18 +60,11 @@ def _load_logo_html():
 
 
 _LOGO_HTML = _load_logo_html()
-print(f"[로고] 파일 경로: {Path(__file__).parent / 'assets' / 'logo-title.png'}")
-print(f"[로고] 파일 존재: {(Path(__file__).parent / 'assets' / 'logo-title.png').exists()}")
-try:
-    print(f"[로고] 파일 크기: {(Path(__file__).parent / 'assets' / 'logo-title.png').stat().st_size} bytes")
-except Exception:
-    print("[로고] 파일 크기 확인 실패")
-
 
 _last_html_path: Path = None
 _last_charts_dir: Path = None
 _last_pipeline_ref = None
-_last_auto_result_list = []  # 자동 분석 결과 누적 리스트 (모든 실행 보관)
+_last_auto_result_list = []
 
 CONFIG_PATH = "config/config.yaml"
 _pipeline: DAIAPipeline | None = None
