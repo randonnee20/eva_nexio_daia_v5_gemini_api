@@ -19,19 +19,28 @@ taskkill /PID 12345 /F
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import gradio as gr
+# ── Gradio 4.36.1 버그: 설치 파일 직접 수정 ──────────────────────────────────
+import subprocess
+subprocess.run([sys.executable, "-c", """
+import gradio_client.utils as _u
+_f = _u.__file__
+_src = open(_f, encoding='utf-8').read()
+_old = 'if "const" in schema:'
+_new = 'if isinstance(schema, dict) and "const" in schema:'
+if _old in _src:
+    open(_f, 'w', encoding='utf-8').write(_src.replace(_old, _new))
+    print('[patch] gradio_client.utils 패치 완료')
+else:
+    print('[patch] 이미 패치됨')
+"""], check=False)
 
-# ── Gradio 4.36.1 bug fix: get_api_info TypeError 차단 ───────────────────────
-import gradio.blocks as _gb
-_orig_get_api_info = _gb.Blocks.get_api_info
-def _safe_get_api_info(self):
-    try:
-        return _orig_get_api_info(self)
-    except TypeError:
-        return {}
-_gb.Blocks.get_api_info = _safe_get_api_info
+# 패치 후 모듈 재로드
+import importlib
+import gradio_client.utils
+importlib.reload(gradio_client.utils)
 # ─────────────────────────────────────────────────────────────────────────────
 
+import gradio as gr
 import pandas as pd
 import yaml
 import tempfile
