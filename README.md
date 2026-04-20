@@ -5,10 +5,9 @@ title: EVA Nexio DAIA v5
 emoji: 📊
 colorFrom: blue
 colorTo: indigo
-sdk: gradio
-python_version: "3.10"
-app_file: app.py
-pinned: false 
+sdk: docker
+app_port: 7860
+pinned: false
 license: mit
 ---
 # EVA NEXIO.DAIA v5

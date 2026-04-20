@@ -627,17 +627,4 @@ with gr.Blocks(
         show_progress="minimal",
     )
 
-# HF Spaces 실행 (show_api=False → api_info 크래시 차단)
-demo.launch(show_api=False)
-
-if __name__ == "__main__":
-    print("=" * 55)
-    print("  DAIA v5 - Gradio UI")
-    print("  접속 주소: http://localhost:7861")
-    print("=" * 55)
-    demo.launch(
-        server_name="127.0.0.1",
-        server_port=7861,
-        share=False,
-        inbrowser=True,
-    )
+demo.launch(server_name="0.0.0.0", server_port=7860, show_api=False)
