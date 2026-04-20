@@ -112,7 +112,7 @@ def _empty_plot(msg="차트 없음"):
     return f
 
 
-def run_analysis(file_obj, schema_choice, no_llm, open_browser, progress=None):
+def run_analysis(file_obj, schema_choice, no_llm, progress=gr.Progress()):
     global _last_html_path, _last_charts_dir, _last_pipeline_ref, _last_auto_result_list
     if progress is None:
         progress = gr.Progress()
@@ -625,6 +625,7 @@ with gr.Blocks(
         inputs=[file_in, schema_dd, no_llm_cb, open_br_cb],
         outputs=_outputs,
         show_progress="minimal",
+        api_name=False,   # ← 이 줄만 추가
     )
 
 demo.launch(server_name="0.0.0.0", server_port=7860, show_api=False)
