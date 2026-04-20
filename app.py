@@ -19,25 +19,24 @@ taskkill /PID 12345 /F
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# ── Gradio 4.36.1 버그: 설치 파일 직접 수정 ──────────────────────────────────
-import subprocess
-subprocess.run([sys.executable, "-c", """
-import gradio_client.utils as _u
-_f = _u.__file__
-_src = open(_f, encoding='utf-8').read()
-_old = 'if "const" in schema:'
-_new = 'if isinstance(schema, dict) and "const" in schema:'
-if _old in _src:
-    open(_f, 'w', encoding='utf-8').write(_src.replace(_old, _new))
-    print('[patch] gradio_client.utils 패치 완료')
-else:
-    print('[patch] 이미 패치됨')
-"""], check=False)
+# ── gradio_client .pyc 캐시까지 삭제 후 패치 ─────────────────────────────────
+import importlib.util, pathlib
 
-# 패치 후 모듈 재로드
-import importlib
-import gradio_client.utils
-importlib.reload(gradio_client.utils)
+_spec = importlib.util.find_spec("gradio_client.utils")
+if _spec:
+    _py = pathlib.Path(_spec.origin)
+    _src = _py.read_text(encoding="utf-8")
+    _old = 'if "const" in schema:'
+    _new = 'if isinstance(schema, dict) and "const" in schema:'
+    if _old in _src:
+        _py.write_text(_src.replace(_old, _new), encoding="utf-8")
+        # .pyc 캐시 삭제
+        _pyc = pathlib.Path(importlib.util.cache_from_source(str(_py)))
+        if _pyc.exists():
+            _pyc.unlink()
+        print("[patch] gradio_client.utils 패치 완료 + 캐시 삭제")
+    else:
+        print("[patch] 이미 패치됨")
 # ─────────────────────────────────────────────────────────────────────────────
 
 import gradio as gr
