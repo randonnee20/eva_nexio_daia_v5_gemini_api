@@ -136,7 +136,7 @@ def run_analysis(file_obj, schema_choice, no_llm, progress=gr.Progress()):
 
     pipeline = _get_pipeline()
     cfg = pipeline._load_config(CONFIG_PATH)
-    cfg["report"]["open_browser"] = open_browser
+    cfg["report"]["open_browser"] = False
 
     if no_llm:
         cfg["llm"] = cfg.get("llm", {})
@@ -526,6 +526,7 @@ with gr.Blocks(
                         inputs=[auto_type_dd, auto_target_in],
                         outputs=[auto_chart1, auto_chart2, auto_chart3, auto_chart4, auto_result_md],
                         show_progress="minimal",
+                        api_name=False,    # ← 추가
                     )
 
                 with gr.Tab("💡 인사이트"):
@@ -561,7 +562,8 @@ with gr.Blocks(
                     qp_btn.click(
                         fn=do_quick_plot,
                         inputs=[qp_file, qp_x, qp_y, qp_color, qp_type],
-                        outputs=qp_out
+                        outputs=qp_out,
+                        api_name=False,    # ← 추가
                     )
 
                 with gr.Tab("📄 PDF 내보내기"):
@@ -599,7 +601,11 @@ with gr.Blocks(
                         except Exception as e:
                             return "❌ 오류: " + str(e)
 
-                    pdf_btn.click(fn=do_pdf_export, outputs=pdf_status)
+                    pdf_btn.click(
+                        fn=do_pdf_export,
+                        outputs=pdf_status,
+                        api_name=False,    # ← 추가
+                    )
 
     with gr.Row(visible=True):
         gr.HTML("<div style='height:4px'></div>")
@@ -621,7 +627,7 @@ with gr.Blocks(
 
     run_btn.click(
         fn=run_analysis,
-        inputs=[file_in, schema_dd, no_llm_cb, open_br_cb],
+        inputs=[file_in, schema_dd, no_llm_cb],
         outputs=_outputs,
         show_progress="minimal",
         api_name=False,   # ← 이 줄만 추가
